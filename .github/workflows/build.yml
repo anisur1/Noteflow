@@ -25,23 +25,7 @@ jobs:
           channel: 'stable'
           flutter-version: '3.19.0'
 
-      - name: Create Flutter App Shell
-        run: |
-          flutter create . --org com.soleeb.noteflow --project-name noteflow_pro
-
-      - name: Inject Android Permissions
-        run: |
-          MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
-          if [ -f "$MANIFEST_PATH" ]; then
-            sed -i '/<application/i \
-            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n\
-            <uses-permission android:name="android.permission.VIBRATE"/>\n\
-            <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n\
-            <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n\
-            <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>' "$MANIFEST_PATH"
-          fi
-
-      - name: Get Dependencies
+      - name: Get Flutter Dependencies
         run: flutter pub get
 
       - name: Build Release APK
