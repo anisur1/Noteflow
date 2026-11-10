@@ -25,7 +25,10 @@ jobs:
           channel: 'stable'
           flutter-version: '3.19.0'
 
-      - name: Get Flutter Dependencies
+      - name: Create Android Platform Folder
+        run: flutter create . --org com.soleeb.noteflow --project-name noteflow_pro
+
+      - name: Get Dependencies
         run: flutter pub get
 
       - name: Build Release APK
