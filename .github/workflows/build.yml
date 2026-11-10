@@ -23,18 +23,31 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.19.0'
 
-      - name: Generate Android Platform Files & Permissions
+      - name: Create Flutter App Shell
         run: |
-          flutter create --platforms=android --org com.soleeb.noteflow .
-          sed -i '/<application/i <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n<uses-permission android:name="android.permission.VIBRATE"/>\n<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n<uses-permission android:name="android.permission.USE_EXACT_ALARM"/>' android/app/src/main/AndroidManifest.xml
+          flutter create . --org com.soleeb.noteflow --project-name noteflow_pro
 
-      - name: Install Dependencies & Build Release APK
+      - name: Inject Android Permissions
         run: |
-          flutter pub get
-          flutter build apk --release
+          MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST_PATH" ]; then
+            sed -i '/<application/i \
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n\
+            <uses-permission android:name="android.permission.VIBRATE"/>\n\
+            <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n\
+            <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n\
+            <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>' "$MANIFEST_PATH"
+          fi
 
-      - name: Upload APK for Download
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Build Release APK
+        run: flutter build apk --release
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: NoteFlow-Pro-APK
